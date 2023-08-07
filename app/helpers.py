@@ -1,7 +1,7 @@
 def get_deck(connection, deck_name):
     cursor = connection.cursor()
     cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}"')
-    results = [{front: back} for (front, back) in cursor]
+    results = {front: back for (front, back) in cursor}
     cursor.close()
     return results
 
@@ -15,14 +15,14 @@ def get_decks(connection):
 def get_card(connection, deck_name, card_front):
     cursor = connection.cursor()
     cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
-    results = [{front: back} for (front, back) in cursor]
+    results = {front: back for (front, back) in cursor}
     cursor.close()
     return results
 
 def get_all_cards(connection):
     cursor = connection.cursor()
     cursor.execute(f'SELECT front,back FROM cards')
-    results = [{front: back} for (front, back) in cursor]
+    results = {front: back for (front, back) in cursor}
     cursor.close()
     return results
 

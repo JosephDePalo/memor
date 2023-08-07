@@ -58,10 +58,49 @@ def study_ui(db, deck_name):
     pass
 
 def add_card_ui(db, deck_name):
-    pass
+    clear()
+
+    front = None
+    taken_fronts = h.get_deck(db, deck_name).keys()
+
+    print(f"Adding Card to \"{deck_name}\"")
+    print("Enter the text for the front of the card or \"exit\" to exit")
+    while True:
+        front = input("> ")
+        if front == "exit": return
+        if not front in taken_fronts:
+            break
+        print(f"\"{front}\" is already taken")
+
+    print("Enter the text for the back of the card or \"exit\" to exit")
+    back = input("> ")
+    if back == "exit": return
+
+    h.add_card(db, deck_name, front, back)
+    
+
 
 def delete_card_ui(db, deck_name):
-    pass
+    clear()
+
+    taken_fronts = h.get_deck(db, deck_name).keys()
+
+    print(f"Deleting Card From \"{deck_name}\"")
+    print("Enter the text for the front of the card or \"exit\" to exit")
+    while True:
+        front = input("> ")
+        if front == "exit": return
+        if front in taken_fronts:
+            print(f"Are you sure you want to delete {front} from {deck_name}? [Y/n]")
+            inp = input("> ")
+            if inp[0] != "n" and inp != "N":
+                h.delete_card(db, deck_name, front)
+                return
+            else:
+                print(f"\"{front}\" was not deleted")
+        else:
+            print(f"\"{front}\" is not in this deck")
+
 
 def edit_card_ui(db, deck_name):
     pass
