@@ -38,3 +38,26 @@ def delete_card(connection, deck_name, card_front):
     cursor.execute(f'DELETE FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
     connection.commit()
     cursor.close()
+
+
+def get_num_due(connection, deck_name):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}" AND due <= NOW()')
+    results = [count for (count) in cursor]
+    cursor.close()
+    return results[0][0]
+
+def get_due_cards(connection, deck_name):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT front FROM cards WHERE deck="{deck_name}" AND due <= NOW()')
+    results = [front for front in cursor]
+    cursor.close()
+    return results
+
+def get_deck_size(connection, deck_name):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}"')
+    results = [count for (count) in cursor]
+    cursor.close()
+    return results[0][0]
+    
