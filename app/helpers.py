@@ -66,4 +66,18 @@ def get_deck_size(connection, deck_name):
     results = [count for (count) in cursor]
     cursor.close()
     return results[0][0]
+
+def delete_deck(connection, deck_name):
+    cursor = connection.cursor()
+    cursor.execute(f'DELETE FROM cards WHERE deck="{deck_name}"')
+    cursor.execute(f'DELETE FROM decks WHERE name="{deck_name}"')
+    connection.commit()
+    cursor.close()
+
+def create_deck(connection, deck_name):
+    cursor = connection.cursor()
+    cursor.execute(f'INSERT INTO decks (name) VALUES ("{deck_name}")')
+    connection.commit()
+    cursor.close()
+    return
     

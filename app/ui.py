@@ -123,7 +123,12 @@ def edit_card_ui(db, deck_name):
             print(f"\"{front}\" is not in this deck")
 
 def delete_deck_ui(db, deck_name):
-    pass
+    clear()
+
+    print(f"Are you sure you want to delete {deck_name}? [Y/n]")
+    inp = input("> ")
+    if inp[0] != "n" and inp != "N":
+        h.delete_deck(db, deck_name)
 
 def view_deck_ui(db, deck_name):
     pass
