@@ -86,7 +86,7 @@ def delete_card_ui(db, deck_name):
     taken_fronts = h.get_deck(db, deck_name).keys()
 
     print(f"Deleting Card From \"{deck_name}\"")
-    print("Enter the text for the front of the card or \"exit\" to exit")
+    print("Enter the text for the front of the card to delete or \"exit\" to exit")
     while True:
         front = input("> ")
         if front == "exit": return
@@ -103,7 +103,24 @@ def delete_card_ui(db, deck_name):
 
 
 def edit_card_ui(db, deck_name):
-    pass
+    clear()
+
+    taken_fronts = h.get_deck(db, deck_name).keys()
+
+    print(f"Editing Card From \"{deck_name}\"")
+    print("Enter the text for the front of the card to edit or \"exit\" to exit")
+    while True:
+        front = input("> ")
+        if front == "exit": return
+        if front in taken_fronts:
+            print(f"Old Back: {h.get_back(db, deck_name, front)}")
+            print(f"Enter the text for the back of the card or \"exit\" to exit")
+            back = input("> ")
+            if back == "exit": return
+            h.edit_card(db, deck_name, front, back)
+            return
+        else:
+            print(f"\"{front}\" is not in this deck")
 
 def delete_deck_ui(db, deck_name):
     pass

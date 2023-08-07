@@ -12,12 +12,12 @@ def get_decks(connection):
     cursor.close()
     return results
 
-def get_card(connection, deck_name, card_front):
+def get_back(connection, deck_name, card_front):
     cursor = connection.cursor()
-    cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
-    results = {front: back for (front, back) in cursor}
+    cursor.execute(f'SELECT back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
+    results = [back[0] for back in cursor]
     cursor.close()
-    return results
+    return results[0]
 
 def get_all_cards(connection):
     cursor = connection.cursor()
@@ -36,6 +36,12 @@ def add_card(connection, deck_name, card_front, card_back):
 def delete_card(connection, deck_name, card_front):
     cursor = connection.cursor()
     cursor.execute(f'DELETE FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
+    connection.commit()
+    cursor.close()
+
+def edit_card(connection, deck_name, card_front, card_back):
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE cards SET back="{card_back}" WHERE deck="{deck_name}" AND front="{card_front}"')
     connection.commit()
     cursor.close()
 
