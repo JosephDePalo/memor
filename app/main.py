@@ -1,6 +1,8 @@
 import mysql.connector
 import time
 
+from helpers import get_deck
+
 connection = None
 for conn_tries in range(0, 10):
     try:
@@ -15,17 +17,12 @@ for conn_tries in range(0, 10):
         break
     except:
         if conn_tries == 9:
-            print("Failed to connect to database")
+            print('Failed to connect to database')
             exit(1)
         else:
             time.sleep(1)
 
-cursor = connection.cursor()
-cursor.execute('SELECT front,back FROM cards WHERE deck = "italian"')
-results = [{front: back} for (front, back) in cursor]
-cursor.close()
+print(get_deck(connection, 'italian'))
 connection.close()
-
-print(results)
 
 
