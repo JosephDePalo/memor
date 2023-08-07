@@ -16,6 +16,9 @@ CREATE TABLE cards (
   deck VARCHAR(40),
   front VARCHAR(40),
   back VARCHAR(40),
+  bucket INT DEFAULT 1,
+  due DATETIME DEFAULT CURRENT_TIMESTAMP,
+  date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (deck, front)
 );
 
