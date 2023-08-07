@@ -1,7 +1,7 @@
 import mysql.connector
 import time
 
-from helpers import get_all_cards
+from ui import repl
 
 db_config = {
             'user': 'root',
@@ -25,7 +25,7 @@ def connect_db(config, num_tries=10):
 
 def main():
     conn = connect_db(db_config)
-    # ADD UI LOGIC
+    repl(conn)
 
 
 if __name__ == '__main__':

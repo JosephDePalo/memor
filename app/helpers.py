@@ -7,8 +7,8 @@ def get_deck(connection, deck_name):
 
 def get_decks(connection):
     cursor = connection.cursor()
-    cursor.execute(f'SELECT `name` FROM decks')
-    results = [deck[0] for deck in cursor]
+    cursor.execute(f'SELECT `name`,`desc` FROM decks')
+    results = [(name, desc) for (name, desc) in cursor]
     cursor.close()
     return results
 
