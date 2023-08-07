@@ -2,11 +2,10 @@ CREATE DATABASE flashcards;
 use flashcards;
 
 CREATE TABLE cards (
-  cid INT NOT NULL AUTO_INCREMENT,
-  deck VARCHAR(40) NOT NULL,
+  deck VARCHAR(40),
   front VARCHAR(40),
   back VARCHAR(40),
-  PRIMARY KEY (cid)
+  PRIMARY KEY (deck, front)
 );
 
 INSERT INTO cards

@@ -1,7 +1,7 @@
 import mysql.connector
 import time
 
-from helpers import get_deck
+import helpers as h
 
 connection = None
 for conn_tries in range(0, 10):
@@ -22,7 +22,7 @@ for conn_tries in range(0, 10):
         else:
             time.sleep(1)
 
-print(get_deck(connection, 'italian'))
+print(h.get_deck(connection, 'italian'))
 connection.close()
 
 
