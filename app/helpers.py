@@ -7,14 +7,21 @@ def get_deck(connection, deck_name):
 
 def get_decks(connection):
     cursor = connection.cursor()
-    cursor.execute(f'SELECT DISTINCT deck FROM cards')
-    results = [deck for deck in cursor]
+    cursor.execute(f'SELECT `name` FROM decks')
+    results = [deck[0] for deck in cursor]
     cursor.close()
     return results
 
 def get_card(connection, deck_name, card_front):
     cursor = connection.cursor()
     cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
+    results = [{front: back} for (front, back) in cursor]
+    cursor.close()
+    return results
+
+def get_all_cards(connection):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT front,back FROM cards')
     results = [{front: back} for (front, back) in cursor]
     cursor.close()
     return results
