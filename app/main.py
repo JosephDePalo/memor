@@ -4,7 +4,7 @@ import mysql.connector
 
 from ui import repl
 
-db_config = {
+DB_CONFIG = {
             'user': 'root',
             'password': 'root',
             'host': 'db',
@@ -17,7 +17,7 @@ def connect_db(config, num_tries=10):
     Connects to the MYSQL database using the given config.
     Returns None if unable to connect.
     """
-    for conn_tries in range(0, num_tries):
+    for conn_tries in range(num_tries):
         try:
             connection = mysql.connector.connect(**config)
             break
@@ -30,7 +30,7 @@ def connect_db(config, num_tries=10):
 
 def main():
     """ Main function. """
-    conn = connect_db(db_config)
+    conn = connect_db(DB_CONFIG)
     if conn is None:
         return
     repl(conn)

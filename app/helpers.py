@@ -8,6 +8,21 @@ DATE_UPDATES = { # In days
     5: 20
 }
 
+def sql_commit(connection, query):
+    """ Executes the given query and commits the changes."""
+    cursor = connection.cursor()
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+
+def sql_get_list(connection, query):
+    """ Executes the given query and returns the results as a list. """
+    cursor = connection.cursor()
+    cursor.execute(query)
+    result = list(cursor)
+    cursor.close()
+    return result
+
 
 def get_deck(connection, deck_name):
     """
@@ -23,49 +38,33 @@ def get_deck(connection, deck_name):
 
 def get_decks(connection):
     """ Returns a list of all decks and their descriptions. """
-    cursor = connection.cursor()
-    cursor.execute('SELECT `name`,`desc` FROM decks')
-    results = [(name, desc) for (name, desc) in cursor]
-    cursor.close()
-    return results
+    return sql_get_list(connection, 'SELECT `name`,`desc` FROM decks')
 
 def get_back(connection, deck_name, card_front):
     """ Returns the back of the given card. """
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
-    results = [back[0] for back in cursor]
-    cursor.close()
-    return results[0]
+    return sql_get_list(connection,
+                        f'SELECT back FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')[0][0]
 
 def add_card(connection, deck_name, card_front, card_back):
     """ Adds a card to the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'INSERT INTO cards (deck, front, back) VALUES ("{deck_name}", "{card_front}", "{card_back}")')
-    connection.commit()
-    cursor.close()
+    sql_commit(connection,
+               f'INSERT INTO cards (deck, front, back) VALUES ("{deck_name}", "{card_front}", "{card_back}")')
 
 def delete_card(connection, deck_name, card_front):
     """ Deletes a card from the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'DELETE FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
-    connection.commit()
-    cursor.close()
+    sql_commit(connection,
+               f'DELETE FROM cards WHERE deck="{deck_name}" AND front="{card_front}"')
 
 def edit_card(connection, deck_name, card_front, card_back):
     """ Edits a card in the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'UPDATE cards SET back="{card_back}" WHERE deck="{deck_name}" AND front="{card_front}"')
-    connection.commit()
-    cursor.close()
+    sql_commit(connection,
+               f'UPDATE cards SET back="{card_back}" WHERE deck="{deck_name}" AND front="{card_front}"')
 
 
 def get_num_due(connection, deck_name):
     """ Returns the number of cards due in the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}" AND due <= NOW()')
-    result = list(cursor)[0][0]
-    cursor.close()
-    return result
+    return sql_get_list(connection,
+                        f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}" AND due <= NOW()')[0][0]
 
 def get_due_cards(connection, deck_name):
     """ Returns a dictionary of cards due in the given deck. """
@@ -77,27 +76,19 @@ def get_due_cards(connection, deck_name):
 
 def get_deck_size(connection, deck_name):
     """ Returns the number of cards in the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}"')
-    result = list(cursor)
-    cursor.close()
-    return result[0][0]
+    return sql_get_list(connection,
+                        f'SELECT COUNT(*) FROM cards WHERE deck="{deck_name}"')[0][0]
 
 def delete_deck(connection, deck_name):
     """ Deletes the given deck. """
-    cursor = connection.cursor()
-    cursor.execute(f'DELETE FROM cards WHERE deck="{deck_name}"')
-    cursor.execute(f'DELETE FROM decks WHERE name="{deck_name}"')
-    connection.commit()
-    cursor.close()
+    sql_commit(connection,
+               f'DELETE FROM cards WHERE deck="{deck_name}"; DELETE FROM decks WHERE name="{deck_name}"')
 
 def create_deck(connection, deck_name):
     """ Creates a new deck with the given name. """
-    cursor = connection.cursor()
-    cursor.execute(f'INSERT INTO decks (name) VALUES ("{deck_name}")')
-    connection.commit()
-    cursor.close()
-       
+    sql_commit(connection,
+               f'INSERT INTO decks (name) VALUES ("{deck_name}")')
+
 def move_bin(connection, deck_name, front, change=1):
     """ Moves the given card's bin up or down by the given amount. """
     cursor = connection.cursor()
