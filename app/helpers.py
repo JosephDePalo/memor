@@ -55,8 +55,8 @@ def get_num_due(connection, deck_name):
 
 def get_due_cards(connection, deck_name):
     cursor = connection.cursor()
-    cursor.execute(f'SELECT front FROM cards WHERE deck="{deck_name}" AND due <= NOW()')
-    results = [front for front in cursor]
+    cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}" AND due <= NOW()')
+    results = {front: back for (front, back) in cursor}
     cursor.close()
     return results
 
@@ -79,5 +79,13 @@ def create_deck(connection, deck_name):
     cursor.execute(f'INSERT INTO decks (name) VALUES ("{deck_name}")')
     connection.commit()
     cursor.close()
-    return
     
+def move_bin(connection, deck_name, front, change=1):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT bin FROM cards WHERE deck="{deck_name}" AND front="{front}"')
+    card_bin = [bin[0] for bin in cursor][0]
+    if card_bin + change < 0 or card_bin + change > 5:
+        return
+    cursor.execute(f'UPDATE cards SET bin=bin+{change} WHERE deck="{deck_name}" AND front="{front}"')
+    connection.commit()
+    cursor.close()

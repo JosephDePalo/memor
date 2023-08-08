@@ -55,7 +55,33 @@ def deck_opts_ui(db, deck_name):
             deck_opts_ui(db, deck_name)
 
 def study_ui(db, deck_name):
-    pass
+
+    due_cards = h.get_due_cards(db, deck_name)
+    num_left = len(due_cards)
+    while due_cards:
+        for front in due_cards.copy():
+            clear()
+            print(f"Deck: {deck_name}\tRemaining: {num_left}")
+            print(f"\t   {front}")
+            input("Press enter to reveal the back")
+            clear()
+            print(f"Deck: {deck_name}\tRemaining: {num_left}")
+            print(f"\t   {due_cards[front]}")
+            print("[1] Fail  [2] OK  [3] Easy")
+            choice = get_int(range=(1,3))
+            match choice:
+                case(1):
+                    h.move_bin(db, deck_name, front, change=-1)
+                case(2):
+                    pass
+                case(3):
+                    h.move_bin(db, deck_name, front, change=1)
+                    due_cards.pop(front)
+                    num_left -= 1
+
+                
+        
+
 
 def add_card_ui(db, deck_name):
     clear()
@@ -131,7 +157,12 @@ def delete_deck_ui(db, deck_name):
         h.delete_deck(db, deck_name)
 
 def view_deck_ui(db, deck_name):
-    pass
+    clear()
+    print(f"Deck: {deck_name}")
+    print("Front\tBack")
+    for front, back in h.get_deck(db, deck_name).items():
+        print(f"{front}\t{back}")
+    input("Press enter to continue")
 
 
 def repl(db):
