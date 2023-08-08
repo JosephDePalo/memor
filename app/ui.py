@@ -3,19 +3,25 @@ import os
 import helpers as h
 
 def clear():
+    """ Clears the terminal screen"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def get_int(prompt="> ", error="\"{raw}\" is not a valid integer", range=None):
+def get_int(prompt="> ", error="\"{raw}\" is not a valid integer", rng=None):
+    """
+    Gets an integer from the user and returns it. If the user enters "exit",
+    returns -1. If the user enters a non-integer, prints error and tries again.
+    If rng is specified, the integer must be in the range.
+    """
     while True:
         raw = input(prompt).split(" ")[0]
-        if raw == "exit": return -1
+        if raw == "exit":
+            return -1
         try:
             result = int(raw)
-            if range:
-                if result >= range[0] and result <= range[1]:
+            if rng:
+                if result in range(rng[0], rng[1]+1):
                     return result
-                else:
-                    print(f"\"{result}\" not in range {range[0]}-{range[1]}")
+                print(f"\"{result}\" not in rng {rng[0]}-{rng[1]}")
             else:
                 return result
         except ValueError:
@@ -23,21 +29,27 @@ def get_int(prompt="> ", error="\"{raw}\" is not a valid integer", range=None):
 
 
 def decks_ui(db):
+    """
+    Displays the decks and their descriptions. Returns -1 if the user wants to
+    exit, otherwise returns 0.
+    """
     clear()
     decks = h.get_decks(db)
     print("Deck\t\tDescription\tDue")
     for i, deck in enumerate(decks):
         print(f"[{i+1}] {deck[0]}\t{deck[1]}\t{h.get_num_due(db, deck[0])}")
-    inp = get_int(range=(1, len(decks)))
-    if inp == -1: return -1
+    inp = get_int(rng=(1, len(decks)))
+    if inp == -1:
+        return -1
     deck_opts_ui(db, decks[inp-1][0])
     return 0
 
 def deck_opts_ui(db, deck_name):
+    """ Displays the options for a deck. """
     clear()
     print(f"Deck: {deck_name}")
     print("[1] Study\n[2] Add Card\n[3] Delete Card\n[4] Edit Card\n[5] Delete Deck\n[6] View Deck\n[7] Back")
-    inp = get_int(range=(1, 7))
+    inp = get_int(rng=(1, 7))
     match(inp):
         case(1):
             study_ui(db, deck_name)
@@ -57,6 +69,10 @@ def deck_opts_ui(db, deck_name):
             deck_opts_ui(db, deck_name)
 
 def study_ui(db, deck_name):
+    """
+    Displays the cards in a deck and allows the user to review them. Based
+    on how the user performs, each card's bin and due date are updated.
+    """
 
     due_cards = h.get_due_cards(db, deck_name)
     num_left = len(due_cards)
@@ -70,7 +86,7 @@ def study_ui(db, deck_name):
             print(f"Deck: {deck_name}\tRemaining: {num_left}")
             print(f"\t   {due_cards[front]}")
             print("[1] Fail  [2] OK  [3] Easy")
-            choice = get_int(range=(1,3))
+            choice = get_int(rng=(1,3))
             match choice:
                 case(1):
                     h.move_bin(db, deck_name, front, change=-1)
@@ -84,14 +100,10 @@ def study_ui(db, deck_name):
             h.update_due(db, deck_name, front)
             due_cards = h.get_due_cards(db, deck_name)
             num_left = len(due_cards)
-    input("No more cards due. Press enter to continue")
-
-
-                
-        
-
+    input("No more cards due. Press enter to continue")      
 
 def add_card_ui(db, deck_name):
+    """ Adds a card to a deck."""
     clear()
 
     front = None
@@ -101,20 +113,21 @@ def add_card_ui(db, deck_name):
     print("Enter the text for the front of the card or \"exit\" to exit")
     while True:
         front = input("> ")
-        if front == "exit": return
+        if front == "exit":
+            return
         if not front in taken_fronts:
             break
         print(f"\"{front}\" is already taken")
 
     print("Enter the text for the back of the card or \"exit\" to exit")
     back = input("> ")
-    if back == "exit": return
+    if back == "exit":
+        return
 
     h.add_card(db, deck_name, front, back)
-    
-
 
 def delete_card_ui(db, deck_name):
+    """ Deletes a card from a deck."""
     clear()
 
     taken_fronts = h.get_deck(db, deck_name).keys()
@@ -123,7 +136,8 @@ def delete_card_ui(db, deck_name):
     print("Enter the text for the front of the card to delete or \"exit\" to exit")
     while True:
         front = input("> ")
-        if front == "exit": return
+        if front == "exit":
+            return
         if front in taken_fronts:
             print(f"Are you sure you want to delete {front} from {deck_name}? [Y/n]")
             inp = input("> ")
@@ -137,6 +151,7 @@ def delete_card_ui(db, deck_name):
 
 
 def edit_card_ui(db, deck_name):
+    """ Edits a card in a deck. """
     clear()
 
     taken_fronts = h.get_deck(db, deck_name).keys()
@@ -145,18 +160,21 @@ def edit_card_ui(db, deck_name):
     print("Enter the text for the front of the card to edit or \"exit\" to exit")
     while True:
         front = input("> ")
-        if front == "exit": return
+        if front == "exit":
+            return
         if front in taken_fronts:
             print(f"Old Back: {h.get_back(db, deck_name, front)}")
-            print(f"Enter the text for the back of the card or \"exit\" to exit")
+            print("Enter the text for the back of the card or \"exit\" to exit")
             back = input("> ")
-            if back == "exit": return
+            if back == "exit":
+                return
             h.edit_card(db, deck_name, front, back)
             return
         else:
             print(f"\"{front}\" is not in this deck")
 
 def delete_deck_ui(db, deck_name):
+    """ Deletes a deck. """
     clear()
 
     print(f"Are you sure you want to delete {deck_name}? [Y/n]")
@@ -165,6 +183,7 @@ def delete_deck_ui(db, deck_name):
         h.delete_deck(db, deck_name)
 
 def view_deck_ui(db, deck_name):
+    """ Displays the cards in a deck. """
     clear()
 
     deck = h.get_deck(db, deck_name)
@@ -176,7 +195,9 @@ def view_deck_ui(db, deck_name):
 
 
 def repl(db):
+    """ The main REPL loop."""
     while True:
         ret_code = decks_ui(db)
         if ret_code == -1:
             break
+        
