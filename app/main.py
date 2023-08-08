@@ -26,6 +26,7 @@ def connect_db(config, num_tries=10):
 def main():
     conn = connect_db(db_config)
     repl(conn)
+    conn.close()
 
 
 if __name__ == '__main__':

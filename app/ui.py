@@ -8,6 +8,7 @@ def clear():
 def get_int(prompt="> ", error="\"{raw}\" is not a valid integer", range=None):
     while True:
         raw = input(prompt).split(" ")[0]
+        if raw == "exit": return -1
         try:
             result = int(raw)
             if range:
@@ -28,8 +29,9 @@ def decks_ui(db):
     for i, deck in enumerate(decks):
         print(f"[{i+1}] {deck[0]}\t{deck[1]}\t{h.get_num_due(db, deck[0])}")
     inp = get_int(range=(1, len(decks)))
-    if inp >= 0 and inp <= len(decks):
-        deck_opts_ui(db, decks[inp-1][0])
+    if inp == -1: return -1
+    deck_opts_ui(db, decks[inp-1][0])
+    return 0
 
 def deck_opts_ui(db, deck_name):
     clear()
@@ -175,4 +177,6 @@ def view_deck_ui(db, deck_name):
 
 def repl(db):
     while True:
-        decks_ui(db)
+        ret_code = decks_ui(db)
+        if ret_code == -1:
+            break
