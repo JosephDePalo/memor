@@ -1,3 +1,14 @@
+
+DATE_UPDATES = { # In days
+    0: 0,
+    1: 1,
+    2: 3,
+    3: 5,
+    4: 10,
+    5: 20
+}
+
+
 def get_deck(connection, deck_name):
     cursor = connection.cursor()
     cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}"')
@@ -87,5 +98,13 @@ def move_bin(connection, deck_name, front, change=1):
     if card_bin + change < 0 or card_bin + change > 5:
         return
     cursor.execute(f'UPDATE cards SET bin=bin+{change} WHERE deck="{deck_name}" AND front="{front}"')
+    connection.commit()
+    cursor.close()
+
+def update_due(connection, deck_name, front):
+    cursor = connection.cursor()
+    cursor.execute(f'SELECT bin FROM cards WHERE deck="{deck_name}" AND front="{front}"')
+    card_bin = [bin[0] for bin in cursor][0]
+    cursor.execute(f'UPDATE cards SET due=DATE_ADD(NOW(), INTERVAL {DATE_UPDATES[card_bin]} DAY) WHERE deck="{deck_name}" AND front="{front}"')
     connection.commit()
     cursor.close()

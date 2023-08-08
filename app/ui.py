@@ -77,7 +77,13 @@ def study_ui(db, deck_name):
                 case(3):
                     h.move_bin(db, deck_name, front, change=1)
                     due_cards.pop(front)
-                    num_left -= 1
+                case(_):
+                    pass
+            h.update_due(db, deck_name, front)
+            due_cards = h.get_due_cards(db, deck_name)
+            num_left = len(due_cards)
+    input("No more cards due. Press enter to continue")
+
 
                 
         
