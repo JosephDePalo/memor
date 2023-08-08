@@ -50,7 +50,7 @@ def deck_opts_ui(connection, deck_name):
     clear()
     print(f"Deck: {deck_name}")
     print("[1] Study\n[2] Add Card\n[3] Delete Card\n\
-          [4] Edit Card\n[5] Delete Deck\n[6] View Deck\n[7] Back")
+[4] Edit Card\n[5] Delete Deck\n[6] View Deck\n[7] Back")
     inp = get_int(rng=(1, 7))
     match(inp):
         case(1):

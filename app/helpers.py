@@ -88,8 +88,9 @@ def get_deck_size(connection, deck_name):
 def delete_deck(connection, deck_name):
     """ Deletes the given deck. """
     sql_commit(connection,
-               f'DELETE FROM cards WHERE deck="{deck_name}";\
-                DELETE FROM decks WHERE name="{deck_name}"')
+               f'DELETE FROM cards WHERE deck="{deck_name}"')
+    sql_commit(connection,
+               f'DELETE FROM decks WHERE name="{deck_name}"')
 
 def create_deck(connection, deck_name):
     """ Creates a new deck with the given name. """
