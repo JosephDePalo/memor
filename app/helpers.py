@@ -11,8 +11,8 @@ DATE_UPDATES = { # In days
 
 def get_deck(connection, deck_name):
     cursor = connection.cursor()
-    cursor.execute(f'SELECT front,back FROM cards WHERE deck="{deck_name}"')
-    results = {front: back for (front, back) in cursor}
+    cursor.execute(f'SELECT front,back,bin,due FROM cards WHERE deck="{deck_name}"')
+    results = {front: {"back":back, "bin":bin, "due":due} for (front, back, bin, due) in cursor}
     cursor.close()
     return results
 

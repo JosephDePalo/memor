@@ -164,10 +164,12 @@ def delete_deck_ui(db, deck_name):
 
 def view_deck_ui(db, deck_name):
     clear()
+
+    deck = h.get_deck(db, deck_name)
     print(f"Deck: {deck_name}")
-    print("Front\tBack")
-    for front, back in h.get_deck(db, deck_name).items():
-        print(f"{front}\t{back}")
+    print("Front\t\tBack\t\tBin\tDue")
+    for front in deck:
+        print(f"{front:16}{deck[front]['back']:16}{deck[front]['bin']}\t{deck[front]['due']}")
     input("Press enter to continue")
 
 
